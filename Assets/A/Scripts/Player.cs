@@ -32,7 +32,6 @@ public class Player : Singleton<Player>
         RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Edge"));
         if (raycastHit2D.collider != null)
         {
-            Debug.Log(speedVector);
             transform.position = raycastHit2D.point - speedVector/2;
         }
         else
@@ -46,6 +45,8 @@ public class Player : Singleton<Player>
     }
     protected virtual void FixedUpdate()
     {
+        if (!InGameManager.Instance.isGaming) return;
+
         speedVector = InGameManager.Instance.joystick.vector;
         speedVector += new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         speedVector.Normalize();
@@ -53,13 +54,11 @@ public class Player : Singleton<Player>
     }
     protected virtual void Update()
     {
+        if (!InGameManager.Instance.isGaming) return;
+
         if (Input.GetKeyDown(KeyCode.X))
-        {
             InGameManager.Instance.BaseAbility();
-        }
         if (Input.GetKeyDown(KeyCode.C))
-        {
             InGameManager.Instance.GoyuAbility();
-        }
     }
 }
