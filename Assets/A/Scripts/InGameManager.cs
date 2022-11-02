@@ -12,6 +12,7 @@ public class InGameManager : Singleton<InGameManager>
     [Header("목숨")]
     [SerializeField] HorizontalLayoutGroup layoutGroup;
     [SerializeField] List<Image> heartImage;
+    protected int _hp = 0;
 
     [Header("스킬")]
     [SerializeField] Image goyuAbility;
@@ -20,7 +21,10 @@ public class InGameManager : Singleton<InGameManager>
     protected float baseDuration = 0;
     protected float baseCooltime = 5;
 
-    protected int _hp = 0;
+    [Header("게임 오버")]
+    [SerializeField] GameObject GameOver_Panel;
+    [SerializeField] TextMeshProUGUI Time_txt;
+
     public int hp
     {
         get
@@ -40,6 +44,7 @@ public class InGameManager : Singleton<InGameManager>
     protected void Start()
     {
         hp = 1;
+        GameOver_Panel.SetActive(false);
     }
 
     protected void Update()
@@ -48,7 +53,16 @@ public class InGameManager : Singleton<InGameManager>
         UpdateTimer(deltaTime);
         UpdateAbiltiyImage(deltaTime);
     }
+    void GameOver() 
+    {
+        if (hp <= 0) 
+        {
+            GameOver_Panel.SetActive(true);
+            int timerInt = (int)timer;
+            Time_txt.text = "버틴 시간 :" + (timerInt / 60).ToString("D2") + " : " + (timerInt % 60).ToString("D2");
+        }
 
+    }
     protected void UpdateAbiltiyImage(float deltaTime)
     {
         if (baseDuration > 0)
