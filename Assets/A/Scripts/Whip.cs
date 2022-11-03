@@ -1,3 +1,4 @@
+
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ public class Whip : MonoBehaviour
         spriteRenderer.color = new Color(0, 1, 0.1f, 0.5f);
         spriteRenderer.DOFade(0.1f, 0.5f).SetLoops(7, LoopType.Yoyo).OnComplete(() =>
         {
+            SoundManager.Instance.PlaySound("whip_hit");
+            InGameManager.Instance.WhipHitEffect(transform.position);
             gameObject.SetActive(false);
             Collider2D playerColider = Physics2D.OverlapCircle(transform.position, 2.5f, LayerMask.GetMask("Player", "Inv"));
             Collider2D[] coliders = Physics2D.OverlapCircleAll(transform.position, 2.5f, LayerMask.GetMask(nameof(Mob)));
@@ -34,9 +37,8 @@ public class Whip : MonoBehaviour
             }
             if (playerColider != null)
             {
-                Player.Instance.speed += 5;
-                Player.Instance.shieldCount += 1;
-                Player.Instance.shieldDuration = 3;
+                Player.Instance.speed += 7;
+                InGameManager.Instance.hp++;
             }
         });
     }

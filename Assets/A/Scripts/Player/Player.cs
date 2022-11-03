@@ -8,7 +8,18 @@ public class Player : Singleton<Player>
 {
     public float f_Speed;
     public float dashSpeed;
-    public float speed;
+    protected float _speed;
+    public float speed
+    {
+        get
+        {
+            return _speed;
+        }
+        set
+        {
+            _speed = Mathf.Max(0, value);
+        }
+    }
     [SerializeField] protected SpriteRenderer shieldParticle;
     public ParticleSystem dashParticle;
 
@@ -23,6 +34,13 @@ public class Player : Singleton<Player>
             return 20;
         }
     }
+    public virtual int maxHp
+    {
+        get
+        {
+            return 2;
+        }
+    }
     protected Rigidbody2D _rigid;
     protected Rigidbody2D rigid
     {
@@ -35,22 +53,24 @@ public class Player : Singleton<Player>
     }
     public virtual void Dash()
     {
-        RaycastHit2D ray2 = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Item"));
+        float dashPower = dashSpeed * (speed / 13 + 0.33f);
+
+        RaycastHit2D ray2 = Physics2D.Raycast(transform.position, speedVector, dashPower, LayerMask.GetMask("Item"));
         if (ray2.collider != null)
             ray2.collider.GetComponent<Item>().OnGet();
 
-        if(speedVector == Vector2.zero)
+        if (speedVector == Vector2.zero)
             return;
 
         dashParticle.gameObject.SetActive(true);
         dashParticle.Play();
         float angle = Mathf.Atan2(speedVector.y, speedVector.x) * Mathf.Rad2Deg;
         dashParticle.transform.rotation = Quaternion.Euler(-(angle + 90f) - 90f, 90, 0);
-        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Edge"));
+        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashPower, LayerMask.GetMask("Edge"));
         if (raycastHit2D.collider != null)
             transform.position = raycastHit2D.point - speedVector / 2;
         else
-            transform.Translate(speedVector * dashSpeed);
+            transform.Translate(speedVector * dashPower);
     }
 
     public virtual void Goyu()
@@ -59,7 +79,7 @@ public class Player : Singleton<Player>
 
     protected virtual void SpeedUpdate()
     {
-        speed -= Time.deltaTime / 7;
+        speed -= Time.deltaTime / 2.5f;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
@@ -84,9 +104,10 @@ public class Player : Singleton<Player>
     {
         if (!InGameManager.Instance.isGaming) return;
 
-        speedVector = InGameManager.Instance.joystick.vector;
-        speedVector += new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        speedVector.Normalize();
+        if (Application.isMobilePlatform)
+            speedVector = InGameManager.Instance.joystick.vector;
+        else
+            speedVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         rigid.velocity = speedVector * speed;
     }
     protected virtual void Update()

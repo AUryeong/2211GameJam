@@ -10,4 +10,11 @@ public enum Character
 public class CharacterManager : Singleton<CharacterManager>
 {
     public Character selectCharacter;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if (Instance == this)
+            DontDestroyOnLoad(gameObject);
+    }
 }

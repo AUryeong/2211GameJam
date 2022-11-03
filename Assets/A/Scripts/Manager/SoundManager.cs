@@ -11,7 +11,7 @@ public enum SoundType
 public class SoundManager : Singleton<SoundManager>
 {
     Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
-    float Volumes = 1f;
+    Dictionary<SoundType, float> Volumes = new Dictionary<SoundType, float>() { { SoundType.SE, 1 }, { SoundType.BGM, 1 } };
     Dictionary<SoundType, AudioSource> AudioSources = new Dictionary<SoundType, AudioSource>();
 
     protected override void Awake()
@@ -19,7 +19,8 @@ public class SoundManager : Singleton<SoundManager>
         base.Awake();
         if (Instance == this)
         {
-            Volumes = SaveManager.Instance.saveData.soundVolume / 100f;
+            Volumes[SoundType.SE] = SaveManager.Instance.saveData.sfxVolume / 100f;
+            Volumes[SoundType.BGM] = SaveManager.Instance.saveData.bgmVolume / 100f;
 
             GameObject Se = new GameObject("SE");
             Se.transform.parent = transform;
@@ -38,9 +39,9 @@ public class SoundManager : Singleton<SoundManager>
         }
     }
 
-    public void VolumeChange(float volume)
+    public void VolumeChange(SoundType soundType, float volume)
     {
-        Volumes = volume;
+        Volumes[soundType] = volume;
     }
     public void PlaySound(string clipName, SoundType ClipType = SoundType.SE, float Volume = 1, float Pitch = 1)
     {
@@ -68,7 +69,7 @@ public class SoundManager : Singleton<SoundManager>
     }
     private void Update()
     {
-        AudioSources[SoundType.BGM].volume = Volumes;
-        AudioSources[SoundType.SE].volume = Volumes;
+        AudioSources[SoundType.BGM].volume = Volumes[SoundType.BGM];
+        AudioSources[SoundType.SE].volume = Volumes[SoundType.SE];
     }
 }
