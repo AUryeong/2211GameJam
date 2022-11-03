@@ -9,6 +9,7 @@ public class SaveData
     public float maxTimer = 0;
     public int sfxVolume = 100;
     public int bgmVolume = 100;
+    public bool uiFlip = false;
     public Character character = Character.Chunja;
 }
 

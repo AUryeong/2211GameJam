@@ -18,9 +18,11 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     [SerializeField] TextMeshProUGUI loreText;
     [SerializeField][TextArea(2, 9)] List<string> lores = new List<string>();
     [Header("애니메이션용")]
+    [SerializeField] TextMeshProUGUI scrollText;
     [SerializeField] Image rightPanel;
     [SerializeField] Image rightButton;
     [SerializeField] Image exitButton;
+    [SerializeField] SpriteRenderer shadow;
 
     public bool isControllable = false;
     Vector2 beginPos;
@@ -36,15 +38,19 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
         foreach (var character in characters)
             character.color = new Color(1, 1, 1, 0);
+        shadow.color = new Color(shadow.color.r, shadow.color.g, shadow.color.b, 0);
 
+        scrollText.rectTransform.anchoredPosition += new Vector2(0, 200);
         rightPanel.rectTransform.anchoredPosition += new Vector2(700, 0);
         rightButton.rectTransform.anchoredPosition += new Vector2(700, 0);
         exitButton.rectTransform.anchoredPosition += new Vector2(-700, 0);
 
+        scrollText.rectTransform.DOAnchorPosY(-200, 1.5f).SetEase(Ease.OutBack).SetRelative();
         rightPanel.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative();
         rightButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative();
         foreach (var character in characters)
             character.DOFade(1, 0.5f).SetDelay(0.5f);
+        shadow.DOFade(0.6f, 0.5f).SetDelay(0.5f);
         exitButton.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
         {
             isControllable = true;
@@ -55,11 +61,14 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     {
         if (isControllable)
         {
+            SoundManager.Instance.PlaySound("button_click", SoundType.SE);
             isControllable = false;
+            scrollText.rectTransform.DOAnchorPosY(200, 1.5f).SetEase(Ease.OutBack).SetRelative();
             rightPanel.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative();
             rightButton.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative();
             foreach (var character in characters)
                 character.DOFade(0, 0.5f).SetDelay(0.5f);
+            shadow.DOFade(0, 0.5f).SetDelay(0.5f);
             exitButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
             {
                 SceneManager.LoadScene("InGame");
@@ -69,13 +78,27 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public void Back()
     {
         if (isControllable)
-            SceneManager.LoadScene("Title");
+        {
+            SoundManager.Instance.PlaySound("button_click", SoundType.SE);
+            isControllable = false;
+            scrollText.rectTransform.DOAnchorPosY(200, 1.5f).SetEase(Ease.OutBack).SetRelative();
+            rightPanel.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+            rightButton.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+            foreach (var character in characters)
+                character.DOFade(0, 0.5f).SetDelay(0.5f);
+            shadow.DOFade(0, 0.5f).SetDelay(0.5f);
+            exitButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
+            {
+                SceneManager.LoadScene("Title");
+            });
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (!isControllable)
             return;
+        SoundManager.Instance.PlaySound("button_click", SoundType.SE);
         foreach (var character in characters)
             character.transform.DOKill();
         beginPos = eventData.position;

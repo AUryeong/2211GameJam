@@ -55,6 +55,7 @@ public class Item : MonoBehaviour
 
     public virtual void OnGet()
     {
+        SoundManager.Instance.PlaySound("item", SoundType.SE);
         gameObject.SetActive(false);
     }
 }

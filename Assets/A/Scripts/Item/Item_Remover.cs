@@ -7,6 +7,7 @@ public class Item_Remover : Item
     public override void OnGet()
     {
         base.OnGet();
+        SoundManager.Instance.PlaySound("wind", SoundType.SE);
         foreach (Mob mob in InGameManager.Instance.mobList.FindAll((Mob x) => x.gameObject.activeSelf))
         {
             mob.gameObject.layer = LayerMask.NameToLayer("MobInv");

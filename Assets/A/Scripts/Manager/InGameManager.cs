@@ -14,6 +14,7 @@ public class InGameManager : Singleton<InGameManager>
     public VariableJoystick joystick;
     [SerializeField] TextMeshProUGUI timerText;
     [SerializeField] Image hitEffect;
+    [SerializeField] RectTransform filpable;
 
     [Header("¸ñ¼û")]
     [SerializeField] HorizontalLayoutGroup layoutGroup;
@@ -95,9 +96,11 @@ public class InGameManager : Singleton<InGameManager>
                     Player.Instance.shieldCount--;
                     if (Player.Instance.shieldCount <= 0)
                         Player.Instance.shieldDuration = 0;
+                    SoundManager.Instance.PlaySound("shield", SoundType.SE);
                     return;
                 }
                 Player.Instance.speed -= Player.Instance.speed / 5;
+                SoundManager.Instance.PlaySound("hit", SoundType.SE);
             }
             _hp = Mathf.Clamp(value, 0, 3);
             if (_hp <= 0)
@@ -111,7 +114,12 @@ public class InGameManager : Singleton<InGameManager>
 
     protected void Start()
     {
+        SoundManager.Instance.PlaySound("fight_bgm", SoundType.BGM);
         character = CharacterManager.Instance.selectCharacter;
+        if (SaveManager.Instance.saveData.uiFlip)
+        {
+            filpable.rotation = Quaternion.Euler(0, 180, 0);
+        }
         Instantiate(playerList[(int)character]);
         Reset();
     }
@@ -136,13 +144,7 @@ public class InGameManager : Singleton<InGameManager>
     protected void Update()
     {
         if (!isGaming)
-        {
-            if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Z))
-                Back();
-            else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.X))
-                Restart();
             return;
-        }
         float deltaTime = Time.deltaTime;
         UpdateTimer(deltaTime);
         UpdateAbiltiyImage(deltaTime);
@@ -233,6 +235,7 @@ public class InGameManager : Singleton<InGameManager>
 
     protected void GameOver()
     {
+        SoundManager.Instance.PlaySound("game_over", SoundType.SE);
         Time.timeScale = 0;
         isGaming = false;
         gameOverParent.SetActive(true);
@@ -265,6 +268,7 @@ public class InGameManager : Singleton<InGameManager>
 
         if (baseDuration <= 0)
         {
+            SoundManager.Instance.PlaySound("dash", SoundType.SE);
             baseDuration = baseCooltime;
             Player.Instance.Dash();
         }
@@ -276,6 +280,7 @@ public class InGameManager : Singleton<InGameManager>
 
         if (goyuDuration <= 0)
         {
+            SoundManager.Instance.PlaySound("skill", SoundType.SE);
             characterImage.DOKill();
             textImage.DOKill();
             baseImage.DOKill();
@@ -348,6 +353,7 @@ public class InGameManager : Singleton<InGameManager>
 
     public void Back()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene("Title");
     }
 

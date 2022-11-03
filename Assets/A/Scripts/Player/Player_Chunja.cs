@@ -14,6 +14,7 @@ public class Player_Chunja : Player
     public override void Goyu()
     {
         base.Goyu();
+        SoundManager.Instance.PlaySound("wind", SoundType.SE);
         foreach (Mob mob in InGameManager.Instance.mobList.FindAll((Mob x) => x.gameObject.activeSelf))
         {
             mob.gameObject.layer = LayerMask.NameToLayer("MobInv");

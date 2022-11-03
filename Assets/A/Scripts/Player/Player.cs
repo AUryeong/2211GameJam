@@ -2,7 +2,6 @@ using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.tvOS;
 
 public class Player : Singleton<Player>
 {
@@ -114,9 +113,9 @@ public class Player : Singleton<Player>
     {
         if (!InGameManager.Instance.isGaming) return;
 
-        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J))
             InGameManager.Instance.BaseAbility();
-        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
             InGameManager.Instance.GoyuAbility();
         ShieldUpdate();
         SpeedUpdate();

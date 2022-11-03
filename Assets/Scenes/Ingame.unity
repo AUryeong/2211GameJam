@@ -1298,6 +1298,7 @@ MonoBehaviour:
   joystick: {fileID: 3881087803052723621}
   timerText: {fileID: 571778500}
   hitEffect: {fileID: 2059868913}
+  filpable: {fileID: 650254362}
   layoutGroup: {fileID: 1098029982}
   heartImage:
   - {fileID: 721391000}
@@ -3297,7 +3298,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -909.99994, y: -489.99994}
+  m_AnchoredPosition: {x: -910.00006, y: -489.99994}
   m_SizeDelta: {x: 960, y: 540}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &3881087803052723623
