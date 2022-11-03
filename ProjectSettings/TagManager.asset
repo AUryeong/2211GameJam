@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Edge
-  - Wall
+  - Mob
   layers:
   - Default
   - TransparentFX
@@ -15,8 +15,8 @@ TagManager:
   - UI
   - Edge
   - Mob
-  - 
-  - 
+  - Item
+  - MobInv
   - 
   - 
   - 
@@ -42,6 +42,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Item
+    uniqueID: 1781548473
     locked: 0
   - name: Player
     uniqueID: 271318087

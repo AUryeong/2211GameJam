@@ -8,6 +8,11 @@ public class Player : Singleton<Player>
 {
     [SerializeField] protected float speed;
     [SerializeField] protected float dashSpeed;
+    [SerializeField] protected SpriteRenderer shieldParticle;
+    public ParticleSystem dashParticle;
+
+    public float shieldDuration = 0;
+    public int shieldCount = 0;
 
     public Vector2 speedVector;
     public virtual float goyuCooltime
@@ -29,10 +34,18 @@ public class Player : Singleton<Player>
     }
     public virtual void Dash()
     {
+        RaycastHit2D ray2 = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Item"));
+        if (ray2.collider != null)
+            ray2.collider.GetComponent<Item>().OnGet();
+
         RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Edge"));
+        dashParticle.gameObject.SetActive(true);
+        dashParticle.Play();
+        float angle = Mathf.Atan2(speedVector.y, speedVector.x) * Mathf.Rad2Deg;
+        dashParticle.transform.rotation = Quaternion.Euler(-(angle + 90f) - 90f, 90, 0);
         if (raycastHit2D.collider != null)
         {
-            transform.position = raycastHit2D.point - speedVector/2;
+            transform.position = raycastHit2D.point - speedVector / 2;
         }
         else
         {
@@ -42,6 +55,25 @@ public class Player : Singleton<Player>
 
     public virtual void Goyu()
     {
+    }
+
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Mob"))
+        {
+            InGameManager.Instance.hp--;
+        }
+    }
+    protected virtual void ShieldUpdate()
+    {
+        if (shieldDuration > 0 == !shieldParticle.gameObject.activeSelf)
+            shieldParticle.gameObject.SetActive(!shieldParticle.gameObject.activeSelf);
+        if (shieldDuration > 0)
+        {
+            shieldDuration -= Time.deltaTime;
+            if (shieldDuration <= 0)
+                shieldCount = 0;
+        }
     }
     protected virtual void FixedUpdate()
     {
@@ -56,9 +88,10 @@ public class Player : Singleton<Player>
     {
         if (!InGameManager.Instance.isGaming) return;
 
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.J))
             InGameManager.Instance.BaseAbility();
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.K))
             InGameManager.Instance.GoyuAbility();
+        ShieldUpdate();
     }
 }
