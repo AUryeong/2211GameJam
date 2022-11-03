@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 using UnityEngine.SceneManagement;
-using System.Reflection;
+using UnityEngine.UI;
+
 
 public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -16,6 +17,12 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     [Header("설명")]
     [SerializeField] TextMeshProUGUI loreText;
     [SerializeField][TextArea(2, 9)] List<string> lores = new List<string>();
+    [Header("애니메이션용")]
+    [SerializeField] Image rightPanel;
+    [SerializeField] Image rightButton;
+    [SerializeField] Image exitButton;
+
+    public bool isControllable = false;
     Vector2 beginPos;
     float centerPos = -4.31f;
     [SerializeField] List<SpriteRenderer> characters;
@@ -23,20 +30,52 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     void Awake()
     {
         CharacterManager.Instance.selectCharacter = SaveManager.Instance.saveData.character;
+        isControllable = false;
         UpdateCharacter(true);
+
+
+        foreach (var character in characters)
+            character.color = new Color(1, 1, 1, 0);
+
+        rightPanel.rectTransform.anchoredPosition += new Vector2(700, 0);
+        rightButton.rectTransform.anchoredPosition += new Vector2(700, 0);
+        exitButton.rectTransform.anchoredPosition += new Vector2(-700, 0);
+
+        rightPanel.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+        rightButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+        foreach (var character in characters)
+            character.DOFade(1, 0.5f).SetDelay(0.5f);
+        exitButton.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
+        {
+            isControllable = true;
+        });
     }
 
     public void GameStart()
     {
-        SceneManager.LoadScene("InGame");
+        if (isControllable)
+        {
+            isControllable = false;
+            rightPanel.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+            rightButton.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+            foreach (var character in characters)
+                character.DOFade(0, 0.5f).SetDelay(0.5f);
+            exitButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
+            {
+                SceneManager.LoadScene("InGame");
+            });
+        }
     }
     public void Back()
     {
-        SceneManager.LoadScene("Title");
+        if (isControllable)
+            SceneManager.LoadScene("Title");
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (!isControllable)
+            return;
         foreach (var character in characters)
             character.transform.DOKill();
         beginPos = eventData.position;
@@ -44,6 +83,8 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!isControllable)
+            return;
         float moveX = (Camera.main.ScreenToWorldPoint(eventData.position) - Camera.main.ScreenToWorldPoint(beginPos)).x;
         foreach (var character in characters)
         {
@@ -54,6 +95,8 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!isControllable)
+            return;
         float spriteRange = 9999;
         float moveX = 0;
         SpriteRenderer rangeChar = null;

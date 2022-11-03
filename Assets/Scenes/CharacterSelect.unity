@@ -262,7 +262,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -272,10 +272,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 485ec31e687c0f942816049564b88cbe, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: e78a0003dd57d5549a298d98b9e9cc9d, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: e78a0003dd57d5549a298d98b9e9cc9d, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: 485ec31e687c0f942816049564b88cbe, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -319,7 +319,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 485ec31e687c0f942816049564b88cbe, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -599,11 +599,15 @@ MonoBehaviour:
   - "\uD33D\uC774\n\uCCB4\uB825 : 2\n\uC2DC\uC791 \uC774\uB3D9\uC18D\uB3C4 : 10\n\uB300\uC26C
     \uC18D\uB3C4 : 2\n\n\uD2B9\uC218 \uB2A5\uB825\n\uB2E4\uB978 \uC0AC\uB78C\uC758
     \uD33D\uC774\uB97C \n\uBAA8\uB450 \uB0A0\uB824\uBC84\uB9B0\uB2E4.\n(\uCFE8\uD0C0\uC784
-    20\uCD08)\n(z"
+    20\uCD08)"
   - "\uD33D\uC774\n\uCCB4\uB825 : 3\n\uC2DC\uC791 \uC774\uB3D9\uC18D\uB3C4 : 9\n\uB300\uC26C
     \uC18D\uB3C4 : 1.5\n\n\uD2B9\uC218 \uB2A5\uB825\n\uCD5C\uB300 2\uD68C, 10\uCD08
     \uC720\uC9C0\uB418\uB294\n\uBCF4\uD638\uB9C9\uC744 \uC804\uAC1C\uD55C\uB2E4.\n(\uCFE8\uD0C0\uC784
     20\uCD08)"
+  rightPanel: {fileID: 1277558487}
+  rightButton: {fileID: 1896926046}
+  exitButton: {fileID: 300768175}
+  isControllable: 0
   characters:
   - {fileID: 226121649}
   - {fileID: 401602506}
