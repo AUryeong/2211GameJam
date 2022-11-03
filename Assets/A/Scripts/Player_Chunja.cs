@@ -8,7 +8,7 @@ public class Player_Chunja : Player
     {
         get
         {
-            return 40;
+            return 20;
         }
     }
     public override void Goyu()

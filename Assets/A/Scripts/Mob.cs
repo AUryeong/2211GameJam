@@ -18,11 +18,11 @@ public class Mob : MonoBehaviour
     public int bounce = 5;
     protected void OnEnable()
     {
-        gameObject.layer = LayerMask.NameToLayer("Mob");
+        gameObject.layer = LayerMask.NameToLayer(nameof(Mob));
     }
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Edge"))
+        if (collision.gameObject.CompareTag(nameof(Edge)))
         {
             bounce--;
             if (bounce <= 0)

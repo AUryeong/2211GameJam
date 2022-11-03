@@ -58,6 +58,11 @@ public class InGameManager : Singleton<InGameManager>
     [SerializeField] Sprite[] characterSprites;
     [SerializeField] Sprite[] textSprites;
 
+    [Header("채찍")]
+    [SerializeField] SpriteRenderer hitWarning;
+    protected float whipCreateDuration = 0;
+    protected float whipCreateCooltime = 10;
+
     public bool isGaming
     {
         get; private set;
@@ -77,7 +82,7 @@ public class InGameManager : Singleton<InGameManager>
         {
             if (!isGaming)
                 return;
-            if (value < _hp && _hp != 0)
+            if (value < _hp && value != 0)
                 if (hitEffect.gameObject.activeSelf)
                     return;
                 else
@@ -107,6 +112,7 @@ public class InGameManager : Singleton<InGameManager>
 
     protected void HitEffect()
     {
+        Player.Instance.gameObject.layer = LayerMask.NameToLayer("Inv");
         hitEffect.gameObject.SetActive(true);
         hitEffect.DOKill();
         hitEffect.color = new Color(1, 0, 0, 0f);
@@ -115,18 +121,37 @@ public class InGameManager : Singleton<InGameManager>
             hitEffect.DOFade(0, 0.5f).OnComplete(() =>
             {
                 hitEffect.gameObject.SetActive(false);
+                Player.Instance.gameObject.layer = LayerMask.NameToLayer("Player");
             });
         });
     }
     protected void Update()
     {
         if (!isGaming)
+        {
+            if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.Z))
+                Back();
+            else if (Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.X))
+                Restart();
             return;
+        }
         float deltaTime = Time.deltaTime;
         UpdateTimer(deltaTime);
         UpdateAbiltiyImage(deltaTime);
         CheckCreateMob(deltaTime);
         CheckCreateItem(deltaTime);
+        CheckCreateWhip(deltaTime);
+    }
+    protected void CheckCreateWhip(float deltaTime)
+    {
+        whipCreateDuration += deltaTime;
+        if (whipCreateDuration >= whipCreateCooltime)
+        {
+            whipCreateDuration -= whipCreateCooltime;
+            GameObject whipObj = PoolManager.Instance.Init(hitWarning.gameObject);
+            whipObj.transform.position = Random.insideUnitCircle * 2f;
+            whipCreateCooltime = 10 + Random.Range(0f, 5f);
+        }
     }
 
     protected void CheckCreateItem(float deltaTime)
@@ -137,6 +162,8 @@ public class InGameManager : Singleton<InGameManager>
             itemCreateDuration -= itemCreateCooltime;
             GameObject itemObj = PoolManager.Instance.Init(items[Random.Range(0, items.Length)].gameObject);
             itemObj.transform.position = Random.insideUnitCircle * 4.2f;
+            itemCreateCooltime = 15 + Random.Range(0f, 10f);
+            
         }
     }
     protected void CheckCreateMob(float deltaTime)
@@ -178,7 +205,7 @@ public class InGameManager : Singleton<InGameManager>
                     if (!mobList.Contains(mob))
                         mobList.Add(mob);
                     mob.transform.position = Quaternion.Euler(0, 0, i * 60) * Vector3.up * 4;
-                    mob.bounce = 2;
+                    mob.bounce = 1;
                     mob.rigid.velocity = Vector2.zero;
                     mob.rigid.AddForce(((Player.Instance.transform.position - mob.transform.position).normalized) * mob.speed);
                 }
@@ -189,7 +216,7 @@ public class InGameManager : Singleton<InGameManager>
                 if (!mobList.Contains(mob))
                     mobList.Add(mob);
                 mob.transform.position = Random.insideUnitCircle.normalized * 4f;
-                mob.bounce = Random.Range(1, 6);
+                mob.bounce = Random.Range(2, 6);
                 mob.rigid.velocity = Vector2.zero;
                 mob.rigid.AddForce(((Player.Instance.transform.position - mob.transform.position).normalized) * mob.speed);
             }
@@ -203,6 +230,7 @@ public class InGameManager : Singleton<InGameManager>
         gameOverParent.SetActive(true);
         int timerInt = (int)timer;
         gameOverTimer.text = "버틴 시간 :" + (timerInt / 60).ToString("D2") + " : " + (timerInt % 60).ToString("D2");
+        gameOverTimer.text += "\n최대 버틴 시간 :" + (timerInt / 60).ToString("D2") + " : " + (timerInt % 60).ToString("D2");
         if (SaveManager.Instance.saveData.maxTimer < timer)
         {
             SaveManager.Instance.saveData.maxTimer = timer;
@@ -329,11 +357,15 @@ public class InGameManager : Singleton<InGameManager>
         mobCreatePatternFirstDuration = 0;
         mobCreatePatternSecondDuration = 0;
         mobCreateCooltime = 2;
+        whipCreateDuration = 0;
+        whipCreateCooltime = 10;
         hitEffect.gameObject.SetActive(false);
         mobList.Clear();
+        itemCreateCooltime = 20;
         itemCreateDuration = 0;
         hp = 1;
         gameOverParent.SetActive(false);
+        Player.Instance.speed = Player.Instance.f_Speed;
         Player.Instance.transform.position = Vector3.zero;
         Player.Instance.shieldDuration = 0;
         Player.Instance.dashParticle.gameObject.SetActive(false);

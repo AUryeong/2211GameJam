@@ -6,8 +6,9 @@ using UnityEngine.tvOS;
 
 public class Player : Singleton<Player>
 {
-    [SerializeField] protected float speed;
-    [SerializeField] protected float dashSpeed;
+    public float f_Speed;
+    public float dashSpeed;
+    public float speed;
     [SerializeField] protected SpriteRenderer shieldParticle;
     public ParticleSystem dashParticle;
 
@@ -38,23 +39,27 @@ public class Player : Singleton<Player>
         if (ray2.collider != null)
             ray2.collider.GetComponent<Item>().OnGet();
 
-        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Edge"));
+        if(speedVector == Vector2.zero)
+            return;
+
         dashParticle.gameObject.SetActive(true);
         dashParticle.Play();
         float angle = Mathf.Atan2(speedVector.y, speedVector.x) * Mathf.Rad2Deg;
         dashParticle.transform.rotation = Quaternion.Euler(-(angle + 90f) - 90f, 90, 0);
+        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashSpeed, LayerMask.GetMask("Edge"));
         if (raycastHit2D.collider != null)
-        {
             transform.position = raycastHit2D.point - speedVector / 2;
-        }
         else
-        {
             transform.Translate(speedVector * dashSpeed);
-        }
     }
 
     public virtual void Goyu()
     {
+    }
+
+    protected virtual void SpeedUpdate()
+    {
+        speed -= Time.deltaTime / 7;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
@@ -93,5 +98,6 @@ public class Player : Singleton<Player>
         if (Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.K))
             InGameManager.Instance.GoyuAbility();
         ShieldUpdate();
+        SpeedUpdate();
     }
 }
