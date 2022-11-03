@@ -11,12 +11,11 @@ public class DataManager : MonoBehaviour
     public Chr sel_chr;
     public static DataManager instance;
 
-    [SerializeField] 
+    [SerializeField]
     private void Awake()
     {
         if (instance == null) instance = this;
         else if (instance != null) return;
         DontDestroyOnLoad(gameObject);
     }
-  
 }
