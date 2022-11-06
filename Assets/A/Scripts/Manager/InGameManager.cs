@@ -23,8 +23,10 @@ public class InGameManager : Singleton<InGameManager>
 
     [Header("스킬")]
     [SerializeField] Image goyuAbility;
+    [SerializeField] Image goyuAbility2;
     protected float goyuDuration = 0;
     [SerializeField] Image baseAbility;
+    [SerializeField] Sprite[] goyuSprites;
     protected float baseDuration = 0;
     protected float baseCooltime = 5;
 
@@ -241,6 +243,7 @@ public class InGameManager : Singleton<InGameManager>
         gameOverParent.SetActive(true);
         int timerInt = (int)timer;
         gameOverTimer.text = "버틴 시간 : " + (timerInt / 60).ToString("D2") + " : " + (timerInt % 60).ToString("D2");
+        timerInt = (int)SaveManager.Instance.saveData.maxTimer;
         gameOverTimer.text += "\n최대 버틴 시간 : " + (timerInt / 60).ToString("D2") + " : " + (timerInt % 60).ToString("D2");
         if (SaveManager.Instance.saveData.maxTimer < timer)
         {
@@ -391,6 +394,8 @@ public class InGameManager : Singleton<InGameManager>
         Player.Instance.shieldDuration = 0;
         Player.Instance.dashParticle.gameObject.SetActive(false);
         Player.Instance.shieldCount = 0;
+        goyuAbility.sprite = goyuSprites[(int)character];
+        goyuAbility2.sprite = goyuSprites[(int)character];
         Time.timeScale = 1;
         PoolManager.Instance.DisableAll();
     }
