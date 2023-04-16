@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ public class Player : Singleton<Player>
     public int shieldCount = 0;
 
     public Vector2 speedVector;
+
+    public Vector3 startVector;
     public virtual float goyuCooltime
     {
         get
@@ -50,26 +53,33 @@ public class Player : Singleton<Player>
             return _rigid;
         }
     }
+
+    private void Start()
+    {
+        startVector = Input.acceleration;
+    }
+
     public virtual void Dash()
     {
         float dashPower = dashSpeed * (speed / 13 + 0.33f);
 
-        RaycastHit2D ray2 = Physics2D.Raycast(transform.position, speedVector, dashPower, LayerMask.GetMask("Item"));
+        Vector2 normal = speedVector.normalized;
+        RaycastHit2D ray2 = Physics2D.Raycast(transform.position, normal, dashPower, LayerMask.GetMask("Item"));
         if (ray2.collider != null)
             ray2.collider.GetComponent<Item>().OnGet();
 
-        if (speedVector == Vector2.zero)
+        if (normal == Vector2.zero)
             return;
 
         dashParticle.gameObject.SetActive(true);
         dashParticle.Play();
-        float angle = Mathf.Atan2(speedVector.y, speedVector.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
         dashParticle.transform.rotation = Quaternion.Euler(-(angle + 90f) - 90f, 90, 0);
-        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, speedVector, dashPower, LayerMask.GetMask("Edge"));
+        RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, normal, dashPower, LayerMask.GetMask("Edge"));
         if (raycastHit2D.collider != null)
-            transform.position = raycastHit2D.point - speedVector / 2;
+            transform.position = raycastHit2D.point - normal / 2;
         else
-            transform.Translate(speedVector * dashPower);
+            transform.Translate(normal * dashPower);
     }
 
     public virtual void Goyu()
@@ -104,10 +114,10 @@ public class Player : Singleton<Player>
         if (!InGameManager.Instance.isGaming) return;
 
         if (Application.isMobilePlatform)
-            speedVector = InGameManager.Instance.joystick.vector;
+            speedVector =  Input.acceleration - startVector;
         else
             speedVector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        rigid.velocity = speedVector * speed;
+        rigid.velocity = 2 * speed * speedVector;
     }
     protected virtual void Update()
     {

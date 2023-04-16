@@ -33,25 +33,25 @@ public class InGameManager : Singleton<InGameManager>
     [Header("몹 생성")]
     [SerializeField] Mob mobOrigin;
     public List<Mob> mobList = new List<Mob>();
-    protected float mobCreateCooltime = 2f;
+    protected float mobCreateCooltime = 4f;
     protected float mobCreateDuraiton = 0;
     protected int mobCreateCount = 0;
 
-    protected int mobCreatePatternFirst = 12;
-    protected int mobCreatePatternFirstCooltime = 5;
+    protected int mobCreatePatternFirst = 17;
+    protected int mobCreatePatternFirstCooltime = 9;
     protected int mobCreatePatternFirstDuration = 0;
 
-    protected int mobCreatePatternSecond = 25;
-    protected int mobCreatePatternSecondCooltime = 13;
+    protected int mobCreatePatternSecond = 30;
+    protected int mobCreatePatternSecondCooltime = 18;
     protected int mobCreatePatternSecondDuration = 0;
 
-    protected float mobCreateRemoveValue = 0.015f;
-    protected float mobCreateMinValue = 0.4f;
+    protected float mobCreateRemoveValue = 0.01f;
+    protected float mobCreateMinValue = 1f;
 
     [Header("아이템 생성")]
     [SerializeField] Item[] items;
     protected float itemCreateDuration = 0;
-    protected float itemCreateCooltime = 20;
+    protected float itemCreateCooltime = 13;
 
     [Header("고유 스킬")]
     [SerializeField] Image outlineImage;
@@ -66,7 +66,7 @@ public class InGameManager : Singleton<InGameManager>
     [SerializeField] SpriteRenderer hitWarning;
     [SerializeField] ParticleSystem whipHitEffect;
     protected float whipCreateDuration = 0;
-    protected float whipCreateCooltime = 10;
+    protected float whipCreateCooltime = 9;
 
     public bool isGaming
     {
@@ -118,10 +118,6 @@ public class InGameManager : Singleton<InGameManager>
     {
         SoundManager.Instance.PlaySound("fight_bgm", SoundType.BGM);
         character = CharacterManager.Instance.selectCharacter;
-        if (SaveManager.Instance.saveData.uiFlip)
-        {
-            filpable.rotation = Quaternion.Euler(0, 180, 0);
-        }
         Instantiate(playerList[(int)character]);
         Reset();
     }

@@ -16,5 +16,6 @@ public class CharacterManager : Singleton<CharacterManager>
         base.Awake();
         if (Instance == this)
             DontDestroyOnLoad(gameObject);
+        
     }
 }

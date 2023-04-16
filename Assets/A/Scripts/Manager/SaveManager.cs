@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,6 @@ public class SaveData
     public float maxTimer = 0;
     public int sfxVolume = 100;
     public int bgmVolume = 100;
-    public bool uiFlip = false;
     public Character character = Character.Chunja;
 }
 
@@ -30,6 +30,12 @@ public class SaveManager : Singleton<SaveManager>
     {
         SaveGameData();
     }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        SaveGameData();
+    }
+
     protected override void Awake()
     {
         base.Awake();

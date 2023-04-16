@@ -24,19 +24,34 @@ public class TitleManager : Singleton<TitleManager>
         bestScoreText.text = (timerInt / 60).ToString("D2") + " : " + (timerInt % 60).ToString("D2");
         sfxSlider.value = SaveManager.Instance.saveData.sfxVolume / 100f;
         bgmSlider.value = SaveManager.Instance.saveData.bgmVolume / 100f;
-        uiFlip.isOn = SaveManager.Instance.saveData.uiFlip;
 
         maxScore.rectTransform.anchoredPosition += new Vector2(0, -400);
         buttonVertical.anchoredPosition += new Vector2(600, 0);
         title.rectTransform.anchoredPosition += new Vector2(-1100, 0);
         settingButton.rectTransform.anchoredPosition += new Vector2(0, 400);
 
-        maxScore.rectTransform.DOAnchorPosY(400, 2).SetRelative();
-        buttonVertical.DOAnchorPosX(-600, 2).SetEase(Ease.OutBack).SetRelative();
-        title.rectTransform.DOAnchorPosX(1100, 2).SetEase(Ease.OutBack).SetRelative();
+        maxScore.rectTransform.DOAnchorPosY(400, 2).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                maxScore.rectTransform.DOKill(true);
+        });
+        buttonVertical.DOAnchorPosX(-600, 2).SetEase(Ease.OutBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                buttonVertical.DOKill(true);
+        });
+        title.rectTransform.DOAnchorPosX(1100, 2).SetEase(Ease.OutBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                title.rectTransform.DOKill(true);
+        });
         settingButton.rectTransform.DOAnchorPosY(-400, 2).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
         {
             isControllable = true;
+        }).OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                settingButton.rectTransform.DOKill(true);
         });
     }
 
@@ -61,12 +76,28 @@ public class TitleManager : Singleton<TitleManager>
         isControllable = false;
 
         SoundManager.Instance.PlaySound("button_click", SoundType.SE);
-        maxScore.rectTransform.DOAnchorPosY(-400, 2).SetRelative();
-        buttonVertical.DOAnchorPosX(600, 2).SetEase(Ease.InBack).SetRelative();
-        title.rectTransform.DOAnchorPosX(-1100, 2).SetEase(Ease.InBack).SetRelative();
+        maxScore.rectTransform.DOAnchorPosY(-400, 2).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                maxScore.rectTransform.DOKill(true);
+        });
+        buttonVertical.DOAnchorPosX(600, 2).SetEase(Ease.InBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                buttonVertical.DOKill(true);
+        });
+        title.rectTransform.DOAnchorPosX(-1100, 2).SetEase(Ease.InBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                title.rectTransform.DOKill(true);
+        });
         settingButton.rectTransform.DOAnchorPosY(400, 2).SetEase(Ease.InBack).SetRelative().OnComplete(() =>
         {
             SceneManager.LoadScene("CharacterSelect");
+        }).OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                settingButton.rectTransform.DOKill(true);
         });
     }
 
@@ -131,9 +162,5 @@ public class TitleManager : Singleton<TitleManager>
     {
         SoundManager.Instance.VolumeChange(SoundType.BGM, bgmSlider.value);
         SaveManager.Instance.saveData.bgmVolume = Mathf.CeilToInt(bgmSlider.value * 100f);
-    }
-    public void UIFlip()
-    {
-        SaveManager.Instance.saveData.uiFlip = uiFlip.isOn;
     }
 }

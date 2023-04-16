@@ -23,6 +23,7 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     [SerializeField] Image rightButton;
     [SerializeField] Image exitButton;
     [SerializeField] SpriteRenderer shadow;
+    [SerializeField] SpriteRenderer shadow2;
 
     public bool isControllable = false;
     Vector2 beginPos;
@@ -34,26 +35,45 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         CharacterManager.Instance.selectCharacter = SaveManager.Instance.saveData.character;
         isControllable = false;
         UpdateCharacter(true);
+        GameManager.Instance.ShowAd();
 
 
         foreach (var character in characters)
             character.color = new Color(1, 1, 1, 0);
         shadow.color = new Color(shadow.color.r, shadow.color.g, shadow.color.b, 0);
+        shadow2.color = new Color(shadow2.color.r, shadow2.color.g, shadow2.color.b, 0);
 
         scrollText.rectTransform.anchoredPosition += new Vector2(0, 200);
         rightPanel.rectTransform.anchoredPosition += new Vector2(700, 0);
         rightButton.rectTransform.anchoredPosition += new Vector2(700, 0);
         exitButton.rectTransform.anchoredPosition += new Vector2(-700, 0);
 
-        scrollText.rectTransform.DOAnchorPosY(-200, 1.5f).SetEase(Ease.OutBack).SetRelative();
-        rightPanel.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative();
-        rightButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative();
+        scrollText.rectTransform.DOAnchorPosY(-200, 1.5f).SetEase(Ease.OutBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                scrollText.rectTransform.DOKill(true);
+        });
+        rightPanel.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                rightPanel.rectTransform.DOKill(true);
+        });
+        rightButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                rightButton.rectTransform.DOKill(true);
+        });
         foreach (var character in characters)
             character.DOFade(1, 0.5f).SetDelay(0.5f);
         shadow.DOFade(0.6f, 0.5f).SetDelay(0.5f);
+        shadow2.DOFade(0.6f, 0.5f).SetDelay(0.5f);
         exitButton.rectTransform.DOAnchorPosX(700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
         {
             isControllable = true;
+        }).OnUpdate(() =>
+        {
+            if (Input.GetMouseButtonDown(0))
+                exitButton.rectTransform.DOKill(true);
         });
     }
 
@@ -69,6 +89,7 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             foreach (var character in characters)
                 character.DOFade(0, 0.5f).SetDelay(0.5f);
             shadow.DOFade(0, 0.5f).SetDelay(0.5f);
+            shadow2.DOFade(0, 0.5f).SetDelay(0.5f);
             exitButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
             {
                 SceneManager.LoadScene("InGame");
@@ -87,6 +108,7 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             foreach (var character in characters)
                 character.DOFade(0, 0.5f).SetDelay(0.5f);
             shadow.DOFade(0, 0.5f).SetDelay(0.5f);
+            shadow2.DOFade(0, 0.5f).SetDelay(0.5f);
             exitButton.rectTransform.DOAnchorPosX(-700, 1.5f).SetEase(Ease.OutBack).SetRelative().OnComplete(() =>
             {
                 SceneManager.LoadScene("Title");
