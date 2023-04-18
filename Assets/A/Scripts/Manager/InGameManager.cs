@@ -5,13 +5,13 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using DG.Tweening;
+using GooglePlayGames;
 
 public class InGameManager : Singleton<InGameManager>
 {
     public Character character = Character.Chunja;
     [SerializeField] List<Player> playerList = new List<Player>();
     [Header("UI")]
-    public VariableJoystick joystick;
     [SerializeField] TextMeshProUGUI timerText;
     [SerializeField] Image hitEffect;
     [SerializeField] RectTransform filpable;
@@ -117,7 +117,7 @@ public class InGameManager : Singleton<InGameManager>
     protected void Start()
     {
         SoundManager.Instance.PlaySound("fight_bgm", SoundType.BGM);
-        character = CharacterManager.Instance.selectCharacter;
+        character = GameManager.Instance.selectCharacter;
         Instantiate(playerList[(int)character]);
         Reset();
     }
@@ -245,7 +245,32 @@ public class InGameManager : Singleton<InGameManager>
         {
             SaveManager.Instance.saveData.maxTimer = timer;
             gameOverTimer.text += "\n<#FFEE00>신기록!";
+
+            PlayGamesPlatform.Instance.ReportScore((int)timer, GPGSIds.leaderboard, (success) =>
+            {
+                if (success)
+                {
+                    gameOverTimer.text += " 기록 완료!";
+                }
+            });
         }
+        GameManager.Instance.ShowFrontAd();
+        if (GameManager.Instance.selectCharacter == Character.Chunja)
+            Social.ReportProgress(GPGSIds.achievement___, 100f, null);
+        else
+            Social.ReportProgress(GPGSIds.achievement____2, 100f, null);
+       
+        if(timerInt >= 60)
+        {
+            Social.ReportProgress(GPGSIds.achievement_1__, 100f, null);
+        }
+        else if(timerInt >= 120)
+        {
+            Social.ReportProgress(GPGSIds.achievement_2__, 100f, null);
+        }
+
+        PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_10__, 1, null);
+        PlayGamesPlatform.Instance.IncrementAchievement(GPGSIds.achievement_100__, 1, null);
     }
     protected void UpdateAbiltiyImage(float deltaTime)
     {

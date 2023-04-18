@@ -37,7 +37,7 @@ public class Whip : MonoBehaviour
             }
             if (playerColider != null)
             {
-                Player.Instance.speed += 7;
+                Player.Instance.speed += 10;
                 InGameManager.Instance.hp++;
             }
         });

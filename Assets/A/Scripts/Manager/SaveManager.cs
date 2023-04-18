@@ -43,7 +43,7 @@ public class SaveManager : Singleton<SaveManager>
         {
             LoadGameData();
             DontDestroyOnLoad(gameObject);
-            CharacterManager.Instance.selectCharacter = saveData.character;
+            GameManager.Instance.selectCharacter = saveData.character;
         }
     }
 
@@ -58,7 +58,7 @@ public class SaveManager : Singleton<SaveManager>
 
     private void SaveGameData()
     {
-        saveData.character = CharacterManager.Instance.selectCharacter;
+        saveData.character = GameManager.Instance.selectCharacter;
         PlayerPrefs.SetString("SaveData", JsonUtility.ToJson(saveData));
     }
 }

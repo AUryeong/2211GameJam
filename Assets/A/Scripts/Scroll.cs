@@ -32,10 +32,9 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     void Awake()
     {
-        CharacterManager.Instance.selectCharacter = SaveManager.Instance.saveData.character;
+        GameManager.Instance.selectCharacter = SaveManager.Instance.saveData.character;
         isControllable = false;
         UpdateCharacter(true);
-        GameManager.Instance.ShowAd();
 
 
         foreach (var character in characters)
@@ -159,13 +158,13 @@ public class Scroll : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             character.transform.DOMoveX(moveX, 0.6f).SetRelative();
 
         int index = characters.IndexOf(rangeChar);
-        CharacterManager.Instance.selectCharacter = (Character)index;
+        GameManager.Instance.selectCharacter = (Character)index;
         UpdateCharacter();
     }
 
     protected void UpdateCharacter(bool isSkipping = false)
     {
-        int index = (int)CharacterManager.Instance.selectCharacter;
+        int index = (int)GameManager.Instance.selectCharacter;
         if (isSkipping)
         {
             float range = centerPos - characters[index].transform.position.x;
